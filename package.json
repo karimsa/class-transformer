@@ -1,0 +1,16 @@
+{
+    "private": true,
+    "name": "@karimsa/class-transformer",
+    "version": "0.0.0",
+    "license": "MIT",
+    "main": "index.dist.js",
+    "scripts": {
+        "build": "esbuild --target=node12 --bundle src/index.ts -o index.dist.js"
+    },
+    "devDependencies": {
+        "class-transformer": "^0.5.1",
+        "esbuild": "^0.14.2",
+        "jest": "^27.4.3",
+        "reflect-metadata": "^0.1.13"
+    }
+}
