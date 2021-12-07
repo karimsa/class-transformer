@@ -1,3 +1,5 @@
+import { transform } from './transform'
+
 // turns a valid JSON value into T
 interface TypeClass<T> {
 	new (value?: string | number | boolean | null): T
@@ -14,7 +16,9 @@ export function Type<T>(createClass: () => TypeClass<T>) {
 	}
 }
 
-export function plainToClass<T>(
+const hasOwnProperty = Object.prototype.hasOwnProperty
+
+export function plainToClass<T extends object>(
 	Class: { new (): T; prototype: object },
 	data: object
 ): T {
@@ -26,13 +30,15 @@ export function plainToClass<T>(
 
 	const dataNormalized: Record<string, any> = { ...data }
 	for (const [key, TypeClass] of TypesRegistry.entries()) {
-		const currentValue = (data as any)[key]
+        if (hasOwnProperty.call(data, key)) {
+		    const currentValue = (data as any)[key]
 
-		if (ClassRegistry.has(TypeClass.prototype)) {
-			dataNormalized[key] = plainToClass(TypeClass, currentValue)
-		} else {
-			dataNormalized[key] = new TypeClass(currentValue)
-		}
+	    	if (ClassRegistry.has(TypeClass.prototype)) {
+    			dataNormalized[key] = plainToClass(TypeClass, currentValue)
+		    } else {
+    			dataNormalized[key] = transform(TypeClass, currentValue)
+	    	}
+        }
 	}
 	return dataNormalized as any
 }

@@ -12,10 +12,12 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
+    "@types/lodash": "^4.14.177",
     "babel-jest": "^27.4.2",
     "class-transformer": "^0.5.1",
     "esbuild": "^0.14.2",
     "jest": "^27.4.3",
+    "lodash": "^4.17.21",
     "prettier": "^2.5.1",
     "reflect-metadata": "^0.1.13",
     "ts-jest": "^27.1.0",
