@@ -4,6 +4,9 @@
   "version": "0.0.1-0",
   "license": "MIT",
   "main": "index.dist.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "esbuild": "esbuild --format=cjs --target=node12 --bundle --external:benchmark --external:class-transformer --external:reflect-metadata",
     "build": "yarn esbuild src/index.ts --outfile=index.dist.js",
