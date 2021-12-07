@@ -9,7 +9,8 @@
     "build": "yarn esbuild src/index.ts --outfile=index.dist.js",
     "test": "tsc -w --noEmit && jest",
     "format": "prettier --write src",
-    "benchmark": "yarn esbuild src/benchmark.ts --outfile=benchmark.dist.js && node benchmark.dist.js"
+    "benchmark": "yarn esbuild src/benchmark.ts --outfile=benchmark.dist.js && node benchmark.dist.js",
+    "profile": "rm -f isolate*.log; yarn esbuild src/profiler-sample.ts --outfile=profiler-sample.dist.js && node --prof profiler-sample.dist.js && node --prof-process isolate* > profile.log"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
