@@ -1,0 +1,8 @@
+node_modules
+*.log
+*.swp
+src
+benchmark
+tsconfig.json
+jest.config.ts
+
