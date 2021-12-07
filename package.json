@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "index.dist.js",
   "scripts": {
-    "esbuild": "esbuild --target=node12 --bundle --external:benchmark --external:class-transformer --external:reflect-metadata",
+    "esbuild": "esbuild --format=cjs --target=node12 --bundle --external:benchmark --external:class-transformer --external:reflect-metadata",
     "build": "yarn esbuild src/index.ts --outfile=index.dist.js",
     "test": "tsc -w --noEmit && jest",
     "format": "prettier --write src",
@@ -15,6 +15,7 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
+    "@types/benchmark": "^2.1.1",
     "@types/lodash": "^4.14.177",
     "babel-jest": "^27.4.2",
     "benchmark": "^2.1.4",
