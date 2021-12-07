@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@karimsa/class-transformer",
-  "version": "0.0.0",
+  "version": "0.0.1-0",
   "license": "MIT",
   "main": "index.dist.js",
   "scripts": {
