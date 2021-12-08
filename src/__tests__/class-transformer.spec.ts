@@ -18,6 +18,7 @@ function shouldTransformCorrectly(TestClass: any, data: object) {
 
 class NestedClass {
 	@classTransformer.Type(() => Number)
+	@Type(() => Number)
 	nested_num: number
 }
 
@@ -46,6 +47,14 @@ test('should parse dates correctly', () => {
 		bool: true,
 		nested: {
 			nested_num: 5.134,
+		},
+	})
+	shouldTransformCorrectly(TestClass, {
+		date: new Date().toISOString(),
+		num: Math.PI,
+		bool: true,
+		nested: {
+			nested_num: '5.134',
 		},
 	})
 })
