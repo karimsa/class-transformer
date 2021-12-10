@@ -1,43 +1,81 @@
 import 'reflect-metadata'
 import { test, expect } from '@jest/globals'
-import isEqual from 'lodash/isEqual'
 import * as classTransformer from 'class-transformer'
 
-import { Type, plainToClass } from '../'
+import * as kClassTransformer from '../'
+
+const Type = ((createClass: any, options: any) => {
+	return (target: any, key: string) => {
+		classTransformer.Type(createClass, options)(target, key)
+		kClassTransformer.Type(createClass, options)(target, key)
+	}
+}) as typeof classTransformer.Type
 
 function clone(value: any) {
 	return JSON.parse(JSON.stringify(value))
 }
 
 function shouldTransformCorrectly(TestClass: any, data: object) {
-	const actual = plainToClass(TestClass, data) as any
+	const actual = kClassTransformer.plainToClass(TestClass, data) as any
 	const expected = classTransformer.plainToClass(TestClass, data) as any
 
 	expect(clone(actual)).toEqual(clone(expected))
 }
 
 class NestedClass {
-	@classTransformer.Type(() => Number)
 	@Type(() => Number)
 	nested_num: number
 }
 
+class OptionOne {
+	@Type(() => (() => '1') as any)
+	option: '1'
+
+	@Type(() => Boolean)
+	option_one: boolean
+}
+
+class OptionTwo {
+	@Type(() => (() => '2') as any)
+	option: '2'
+
+	@Type(() => Number)
+	option_two: number
+}
+
+class OptionThree {
+	@Type(() => (() => '3') as any)
+	option: '3'
+
+	@Type(() => String)
+	option_three: string
+}
+
 class TestClass {
-	@classTransformer.Type(() => Date)
 	@Type(() => Date)
 	date: Date
 
-	@classTransformer.Type(() => Number)
 	@Type(() => Number)
 	num: number
 
-	@classTransformer.Type(() => Boolean)
 	@Type(() => Boolean)
 	bool: boolean
 
-	@classTransformer.Type(() => NestedClass)
 	@Type(() => NestedClass)
 	nested: NestedClass
+
+	@Type(undefined, {
+		discriminator: {
+			property: 'option',
+			subTypes: [
+				{ value: OptionOne, name: '1' },
+				{ value: OptionOne, name: '2' },
+				{ value: OptionOne, name: '3' },
+			],
+		},
+		keepDiscriminatorProperty: true,
+	})
+	varying_object: OptionOne | OptionTwo | OptionThree
 }
 
 test('should parse dates correctly', () => {
@@ -79,5 +117,40 @@ test('should parse partial objects', () => {
 	})
 	shouldTransformCorrectly(TestClass, {
 		nested: {},
+	})
+})
+
+test('should parse discriminating types', () => {
+	shouldTransformCorrectly(TestClass, {
+		varying_object: {
+			option: '1',
+			option_one: 1,
+			option_two: true,
+			option_three: 'three',
+		},
+	})
+	shouldTransformCorrectly(TestClass, {
+		varying_object: {
+			option: '2',
+			option_one: 1,
+			option_two: true,
+			option_three: 'three',
+		},
+	})
+	shouldTransformCorrectly(TestClass, {
+		varying_object: {
+			option: '3',
+			option_one: 1,
+			option_two: true,
+			option_three: 'three',
+		},
+	})
+	shouldTransformCorrectly(TestClass, {
+		varying_object: {
+			option: 'invalid',
+			option_one: 1,
+			option_two: true,
+			option_three: 'three',
+		},
 	})
 })
