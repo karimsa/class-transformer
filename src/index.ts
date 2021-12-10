@@ -34,7 +34,9 @@ export function plainToClass<T extends object>(
 			const currentValue = (data as any)[key]
 
 			if (ClassRegistry.has(TypeClass.prototype)) {
-				dataNormalized[key] = plainToClass(TypeClass, currentValue)
+				if (typeof currentValue === 'object') {
+					dataNormalized[key] = plainToClass(TypeClass, currentValue)
+				}
 			} else {
 				dataNormalized[key] = transform(TypeClass, currentValue)
 			}

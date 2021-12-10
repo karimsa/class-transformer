@@ -13,7 +13,7 @@ function shouldTransformCorrectly(TestClass: any, data: object) {
 	const actual = plainToClass(TestClass, data) as any
 	const expected = classTransformer.plainToClass(TestClass, data) as any
 
-	expect(clone(actual)).toEqual(clone(actual))
+	expect(clone(actual)).toEqual(clone(expected))
 }
 
 class NestedClass {
