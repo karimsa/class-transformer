@@ -70,6 +70,19 @@ function resolveTypeFromEntry(
 	return Object
 }
 
+function performTransformation(TypeClass: TypeClass<any>, value: any): any {
+	if (Array.isArray(value)) {
+		return value.map((nested) => performTransformation(TypeClass, nested))
+	}
+	if (ClassRegistry.has(TypeClass.prototype)) {
+		if (typeof value === 'object') {
+			return plainToClass(TypeClass, value)
+		}
+		return value
+	}
+	return transform(TypeClass, value)
+}
+
 export function plainToClass<T extends object>(
 	Class: { new (): T; prototype: object },
 	data: object
@@ -86,13 +99,7 @@ export function plainToClass<T extends object>(
 			const currentValue = (data as any)[key]
 			const TypeClass = resolveTypeFromEntry(typeEntry, currentValue)
 
-			if (ClassRegistry.has(TypeClass.prototype)) {
-				if (typeof currentValue === 'object') {
-					dataNormalized[key] = plainToClass(TypeClass, currentValue)
-				}
-			} else {
-				dataNormalized[key] = transform(TypeClass, currentValue)
-			}
+			dataNormalized[key] = performTransformation(TypeClass, currentValue)
 		}
 	}
 	return dataNormalized as any

@@ -64,6 +64,9 @@ class TestClass {
 	@Type(() => NestedClass)
 	nested: NestedClass
 
+	@Type(() => NestedClass)
+	nested_list: NestedClass[]
+
 	@Type(undefined, {
 		discriminator: {
 			property: 'option',
@@ -78,7 +81,7 @@ class TestClass {
 	varying_object: OptionOne | OptionTwo | OptionThree
 }
 
-test('should parse dates correctly', () => {
+test('should parse valid values correctly', () => {
 	shouldTransformCorrectly(TestClass, {
 		date: new Date().toISOString(),
 		num: Math.PI,
@@ -86,6 +89,14 @@ test('should parse dates correctly', () => {
 		nested: {
 			nested_num: 5.134,
 		},
+		nested_list: [
+			{
+				nested_num: 1341.3435,
+			},
+			{
+				nested_num: 138484.2,
+			},
+		],
 	})
 	shouldTransformCorrectly(TestClass, {
 		date: new Date().toISOString(),
@@ -94,6 +105,11 @@ test('should parse dates correctly', () => {
 		nested: {
 			nested_num: '5.134',
 		},
+		nested_list: [
+			{
+				nested_num: '93838134.4',
+			},
+		],
 	})
 })
 
@@ -103,11 +119,24 @@ test('should parse invalid values', () => {
 		num: 'not a number',
 		bool: 'not a bool',
 		nested: 'not nested object',
+		nested_list: 'fudge',
 	})
 	shouldTransformCorrectly(TestClass, {
 		nested: {
 			nested_num: 'not a num',
 		},
+		nested_list: ['nested value'],
+	})
+	shouldTransformCorrectly(TestClass, {
+		nested_list: [
+			'invalid',
+			{
+				nested_num: 1434.134,
+			},
+			{
+				nested_num: 'invalid nested',
+			},
+		],
 	})
 })
 
