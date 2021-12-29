@@ -71,11 +71,14 @@ function resolveTypeFromEntry(
 }
 
 function performTransformation(TypeClass: TypeClass<any>, value: any): any {
+	if (value == null) {
+		return value
+	}
 	if (Array.isArray(value)) {
 		return value.map((nested) => performTransformation(TypeClass, nested))
 	}
 	if (ClassRegistry.has(TypeClass.prototype)) {
-		if (typeof value === 'object') {
+		if (typeof value === 'object' && value) {
 			return plainToClass(TypeClass, value)
 		}
 		return value
@@ -89,11 +92,13 @@ export function plainToClass<T extends object>(
 ): T {
 	const TypesRegistry = ClassRegistry.get(Class.prototype)
 	if (!TypesRegistry) {
-		console.warn(`Class was not found in the registry`)
 		return data as any
 	}
 
-	const dataNormalized: Record<string, any> = { ...data }
+	const dataNormalized: Record<string, any> = Object.assign(
+		new Class(),
+		data
+	) as any
 	for (const [key, typeEntry] of TypesRegistry.entries()) {
 		if (hasOwnProperty.call(data, key)) {
 			const currentValue = (data as any)[key]
