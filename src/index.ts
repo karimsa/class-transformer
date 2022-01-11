@@ -1,15 +1,11 @@
 import { transform } from './transform'
 
-interface TypeClass<T> {
-	new (...args: any[]): T
-}
-
 type TypeRegistryEntry =
-	| { type: 'single'; Class: TypeClass<any> }
+	| { type: 'single'; Class: Function }
 	| {
 			type: 'discriminated'
 			property: string
-			options: Map<string, TypeClass<any>>
+			options: Map<string, Function>
 	  }
 
 const ClassRegistry = new WeakMap<object, Map<string, TypeRegistryEntry>>()
@@ -17,12 +13,12 @@ const ClassRegistry = new WeakMap<object, Map<string, TypeRegistryEntry>>()
 interface TypeOptions {
 	discriminator: {
 		property: string
-		subTypes: { name: string; value: TypeClass<any> }[]
+		subTypes: { name: string; value: Function }[]
 	}
 }
 
 export function Type<T>(
-	createClass: ((t: never) => TypeClass<T>) | undefined,
+	createClass: ((t: never) => Function) | undefined,
 	options?: TypeOptions
 ) {
 	return function (target: any, key: string) {
@@ -55,7 +51,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
 function resolveTypeFromEntry(
 	typeEntry: TypeRegistryEntry,
 	object: any
-): TypeClass<any> {
+): Function {
 	if (typeEntry.type === 'single') {
 		return typeEntry.Class
 	}
@@ -72,7 +68,7 @@ function resolveTypeFromEntry(
 	return Object
 }
 
-function performTransformation(TypeClass: TypeClass<any>, value: any): any {
+function performTransformation(TypeClass: Function, value: any): any {
 	if (value == null) {
 		return value
 	}
@@ -81,7 +77,7 @@ function performTransformation(TypeClass: TypeClass<any>, value: any): any {
 	}
 	if (ClassRegistry.has(TypeClass.prototype)) {
 		if (typeof value === 'object' && value) {
-			return plainToClass(TypeClass, value)
+			return plainToClass(TypeClass as any, value)
 		}
 		return value
 	}
