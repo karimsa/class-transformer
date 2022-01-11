@@ -23,7 +23,7 @@ interface TypeOptions {
 }
 
 export function Type<T>(
-	createClass: (() => TypeClass<T>) | undefined,
+	createClass: ((t: never) => TypeClass<T>) | undefined,
 	options?: TypeOptions
 ) {
 	return function (target: any, key: string) {
@@ -32,7 +32,7 @@ export function Type<T>(
 		ClassRegistry.set(target, TypesRegistry)
 
 		if (createClass) {
-			TypesRegistry.set(key, { type: 'single', Class: createClass() })
+			TypesRegistry.set(key, { type: 'single', Class: createClass(undefined as never) })
 		} else {
 			const classOptions = new Map()
 			for (const { name, value } of options!.discriminator.subTypes) {
