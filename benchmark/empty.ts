@@ -1,19 +1,12 @@
 import Benchmark from 'benchmark'
 
-import { Type, plainToClass } from '../'
+import { plainToClass } from '../'
 import * as classTransformer from 'class-transformer'
 
 class BenchClass {
-	@Type(() => BenchClass)
 	nested: BenchClass
-
-	@Type(() => Boolean)
 	bool: boolean
-
-	@Type(() => Date)
 	date: Date
-
-	@Type(() => Date)
 	other_date: Date
 }
 
@@ -32,6 +25,13 @@ const benchData: BenchClass = {
 	date: new Date().toISOString(),
 } as any
 
-for (let i = 0; i < 1e3; i++) {
-	plainToClass(BenchClass, benchData)
-}
+new Benchmark.Suite()
+	.add('class-transformer', () =>
+		classTransformer.plainToClass(BenchClass, benchData)
+	)
+	.add('@karimsa/class-transformer', () => plainToClass(BenchClass, benchData))
+	.on('cycle', (event: any) => console.log(String(event.target)))
+	.on('complete', function () {
+		console.log('Fastest is ' + this.filter('fastest').map('name'))
+	})
+	.run({ async: true })

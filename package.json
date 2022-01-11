@@ -8,10 +8,10 @@
   },
   "scripts": {
     "esbuild": "esbuild --format=cjs --target=node12 --bundle --external:benchmark --external:class-transformer --external:reflect-metadata",
-    "build": "yarn esbuild src/index.ts --outfile=index.dist.js",
+    "build": "rm -rf dist && tsc && yarn esbuild src/index.ts --outfile=index.dist.js",
     "test": "jest",
-    "format": "prettier --write src",
-    "benchmark": "yarn build && ts-node benchmark/index.ts",
+    "format": "prettier --write src benchmark",
+    "benchmark": "yarn build && echo \"With heavy use of decorators:\" && ts-node benchmark/index.ts && echo \"\" && echo \"With zero use of decorators:\" && ts-node benchmark/empty.ts",
     "profile": "rm -f isolate*.log; yarn build && node --prof `which ts-node` benchmark/profiler-sample.ts && node --prof-process isolate* > profile.log"
   },
   "devDependencies": {
