@@ -32,7 +32,10 @@ export function Type<T>(
 		ClassRegistry.set(target, TypesRegistry)
 
 		if (createClass) {
-			TypesRegistry.set(key, { type: 'single', Class: createClass(undefined as never) })
+			TypesRegistry.set(key, {
+				type: 'single',
+				Class: createClass(undefined as never),
+			})
 		} else {
 			const classOptions = new Map()
 			for (const { name, value } of options!.discriminator.subTypes) {
@@ -87,11 +90,11 @@ function performTransformation(TypeClass: TypeClass<any>, value: any): any {
 }
 
 export function plainToClass<T extends object>(
-	Class: { new (): T; prototype: object },
+	Class: { new (...args: any[]): T; prototype: object },
 	data: object
 ): T {
 	const dataNormalized: Record<string, any> = Object.assign(
-		new Class(),
+		Object.create(Class.prototype),
 		data
 	) as any
 
