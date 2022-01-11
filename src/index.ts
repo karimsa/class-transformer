@@ -89,7 +89,7 @@ export function plainToClass<T extends object>(
 	data: object
 ): T {
 	const dataNormalized: Record<string, any> = Object.assign(
-		Object.create(Class.prototype),
+		new Class(),
 		data
 	) as any
 
