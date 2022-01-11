@@ -1,8 +1,7 @@
 import { transform } from './transform'
 
-// turns a valid JSON value into T
 interface TypeClass<T> {
-	new (value?: string | number | boolean | null): T
+	new (...args: any[]): T
 }
 
 type TypeRegistryEntry =
