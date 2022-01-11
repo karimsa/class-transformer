@@ -12,10 +12,10 @@ const Type = ((createClass: any, options: any) => {
 }) as typeof classTransformer.Type
 
 function clone(value: any) {
-	return JSON.parse(JSON.stringify(value))
+	return value ? JSON.parse(JSON.stringify(value)) : value
 }
 
-function shouldTransformCorrectly(TestClass: any, data: object) {
+function shouldTransformCorrectly(TestClass: any, data: any) {
 	const actual = kClassTransformer.plainToClass(TestClass, data) as any
 	const expected = classTransformer.plainToClass(TestClass, data) as any
 
@@ -191,4 +191,19 @@ test('undecorated classes', () => {
 	shouldTransformCorrectly(UntypedClass, {
 		foo: 1,
 	})
+})
+
+test('does not die on nulls', () => {
+	class WithNullsNested {
+		@Type(() => String)
+		str?: string
+	}
+	class WithNulls {
+		@Type(() => WithNullsNested)
+		nested: WithNullsNested
+	}
+	shouldTransformCorrectly(WithNulls, null)
+	shouldTransformCorrectly(WithNulls, undefined)
+	shouldTransformCorrectly(WithNulls, { str: null })
+	shouldTransformCorrectly(WithNulls, {})
 })

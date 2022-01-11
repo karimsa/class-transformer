@@ -88,6 +88,10 @@ export function plainToClass<T extends object>(
 	Class: { new (...args: any[]): T; prototype: object },
 	data: object
 ): T {
+	if (!data) {
+		return data as any
+	}
+
 	const dataNormalized: Record<string, any> = Object.assign(
 		new Class(),
 		data
