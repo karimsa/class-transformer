@@ -183,3 +183,12 @@ test('should parse discriminating types', () => {
 		},
 	})
 })
+
+test('undecorated classes', () => {
+	class UntypedClass {
+		foo: number
+	}
+	shouldTransformCorrectly(UntypedClass, {
+		foo: 1,
+	})
+})

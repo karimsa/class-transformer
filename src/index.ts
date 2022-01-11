@@ -90,15 +90,16 @@ export function plainToClass<T extends object>(
 	Class: { new (): T; prototype: object },
 	data: object
 ): T {
-	const TypesRegistry = ClassRegistry.get(Class.prototype)
-	if (!TypesRegistry) {
-		return data as any
-	}
-
 	const dataNormalized: Record<string, any> = Object.assign(
 		new Class(),
 		data
 	) as any
+
+	const TypesRegistry = ClassRegistry.get(Class.prototype)
+	if (!TypesRegistry) {
+		return dataNormalized as any
+	}
+
 	for (const [key, typeEntry] of TypesRegistry.entries()) {
 		if (hasOwnProperty.call(data, key)) {
 			const currentValue = (data as any)[key]
